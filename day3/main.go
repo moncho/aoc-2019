@@ -28,6 +28,10 @@ func (l line) contains(xy xy) bool {
 	return minx <= xy.x && xy.x <= max && miny <= xy.y && xy.y <= may
 }
 
+func (l line) length() int {
+	return distance(l.a, l.b)
+}
+
 func (l line) intersection(other line) xy {
 
 	if l.vertical() == other.vertical() {
@@ -66,20 +70,44 @@ func main() {
 	for scanner.Scan() {
 		wires = append(wires, scanner.Text())
 	}
-	md := manhattanDistance(wires[0], wires[1])
-	fmt.Printf("What is the Manhattan distance from the central port to the closest intersection? %d\n", md)
+	path1 := path(wires[0])
+	path2 := path(wires[1])
+	fmt.Printf("What is the Manhattan distance from the central port to the closest intersection? %d\n",
+		manhattanDistance(path1, path2))
+
+	fmt.Printf("What is the fewest combined steps the wires must take to reach an intersection?? %d\n",
+		shortestCombinedPath(path1, path2))
 }
 
-func manhattanDistance(wire1, wire2 string) int {
-	path1 := path(wire1)
-	path2 := path(wire2)
-
-	candidate := 1000000
-	for _, line1 := range path1 {
-		for _, line2 := range path2 {
+func shortestCombinedPath(wirePath1, wirePath2 []line) int {
+	shortestCombinedPath := 1000000
+	path1Steps := 0
+	for _, line1 := range wirePath1 {
+		path2DSteps := 0
+		for _, line2 := range wirePath2 {
 			intersect := line1.intersection(line2)
 			if intersect.x != 0 && intersect.y != 0 {
-				dto := distanceToOrigin(intersect)
+				line1Steps := distance(line1.a, intersect)
+				line2Steps := distance(line2.a, intersect)
+				candidate := path1Steps + line1Steps + path2DSteps + line2Steps
+				if candidate < shortestCombinedPath {
+					shortestCombinedPath = candidate
+				}
+			}
+			path2DSteps += line2.length()
+		}
+		path1Steps += line1.length()
+	}
+	return shortestCombinedPath
+}
+func manhattanDistance(wirePath1, wirePath2 []line) int {
+
+	candidate := 1000000
+	for _, line1 := range wirePath1 {
+		for _, line2 := range wirePath2 {
+			intersect := line1.intersection(line2)
+			if intersect.x != 0 && intersect.y != 0 {
+				dto := distance(xy{}, intersect)
 				if dto < candidate {
 					candidate = dto
 				}
@@ -89,8 +117,8 @@ func manhattanDistance(wire1, wire2 string) int {
 	return candidate
 }
 
-func distanceToOrigin(xy xy) int {
-	return abs(xy.x) + abs(xy.y)
+func distance(pointA, pointB xy) int {
+	return abs(pointA.x-pointB.x) + abs(pointA.y-pointB.y)
 }
 
 func path(wire string) []line {
