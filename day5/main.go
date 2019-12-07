@@ -39,4 +39,11 @@ func main() {
 
 	fmt.Printf("After providing 1 to the only input instruction and passing all the tests, what diagnostic code does the program produce? %d\n", out)
 
+	computer = intcode.New(program)
+	out, err = computer.Run(5)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("What is the diagnostic code for system ID 5?? %d\n", out)
 }
