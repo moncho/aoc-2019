@@ -42,6 +42,7 @@ func main() {
 	computer = intcode.New(program)
 	out, err = computer.Run(5)
 	if err != nil {
+		computer.BSOD(os.Stdout)
 		panic(err)
 	}
 
