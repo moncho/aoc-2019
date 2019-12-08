@@ -33,7 +33,8 @@ func New(program []int) Computer {
 }
 
 // Run this computer
-func (c *Computer) Run(in int) (int, error) {
+func (c *Computer) Run(in ...int) (int, error) {
+	i := 0
 	ip := 0
 	var out int
 
@@ -71,8 +72,8 @@ func (c *Computer) Run(in int) (int, error) {
 			c.memory[c.memory[ip+3]] = param1 * param2
 			ip += 4
 		case input:
-
-			c.memory[c.memory[ip+1]] = in
+			c.memory[c.memory[ip+1]] = in[i]
+			i++
 			ip += 2
 		case output:
 			if modes[2] == 0 {
