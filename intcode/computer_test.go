@@ -100,3 +100,62 @@ func TestComputer_Run(t *testing.T) {
 		})
 	}
 }
+
+func TestComputer_IO(t *testing.T) {
+
+	program := []int{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31,
+		1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104,
+		999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99}
+	type args struct {
+		input int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		out     int
+		wantErr bool
+	}{
+		{
+			"4",
+			args{
+				4,
+			},
+			999,
+			false,
+		},
+		{
+			"8",
+			args{
+				8,
+			},
+			1000,
+			false,
+		},
+		{
+			"9",
+			args{
+				17,
+			},
+			1001,
+			false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			programCopy := make([]int, len(program))
+			copy(programCopy, program)
+			c := Computer{
+				memory: programCopy,
+			}
+			got, err := c.Run(tt.args.input)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Computer.Run() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.out {
+				t.Errorf("Computer.Run() = %v, want %v", got, tt.out)
+			}
+		})
+	}
+}
