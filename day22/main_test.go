@@ -21,10 +21,28 @@ func Test_deck_shuffle(t *testing.T) {
 			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
 			args{
 				`deal with increment 7
-deal into new stack
-deal into new stack`,
+				deal into new stack
+				deal into new stack`,
 			},
 			[]int{0, 3, 6, 9, 2, 5, 8, 1, 4, 7},
+		},
+		{
+			"",
+			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+			args{`cut 6
+			deal with increment 7
+			deal into new stack`},
+			[]int{3, 0, 7, 4, 1, 8, 5, 2, 9, 6},
+		},
+		{
+			"",
+			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+			args{
+				`deal with increment 7
+			deal with increment 9
+			cut -2`,
+			},
+			[]int{6, 3, 0, 7, 4, 1, 8, 5, 2, 9},
 		},
 		{
 			"",
@@ -42,16 +60,6 @@ deal into new stack`,
 				cut -1`,
 			},
 			[]int{9, 2, 5, 8, 1, 4, 7, 0, 3, 6},
-		},
-		{
-			"",
-			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			args{
-				`deal with increment 7
-				deal with increment 9
-				cut -2`,
-			},
-			[]int{6, 3, 0, 7, 4, 1, 8, 5, 2, 9},
 		},
 	}
 	for _, tt := range tests {
@@ -83,6 +91,14 @@ func Test_deal(t *testing.T) {
 			},
 			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
 			[]int{0, 7, 4, 1, 8, 5, 2, 9, 6, 3},
+		},
+		{
+			"",
+			args{
+				7,
+			},
+			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+			[]int{0, 3, 6, 9, 2, 5, 8, 1, 4, 7},
 		},
 	}
 	for _, tt := range tests {
@@ -117,15 +133,54 @@ func Test_cut(t *testing.T) {
 		{
 			"",
 			args{
+				2,
+			},
+			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+			[]int{3, 4, 5, 6, 7, 8, 9, 0, 1, 2},
+		},
+		{
+			"",
+			args{
 				-4,
 			},
 			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
 			[]int{6, 7, 8, 9, 0, 1, 2, 3, 4, 5},
 		},
+		{
+			"",
+			args{
+				-2,
+			},
+			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+			[]int{8, 9, 0, 1, 2, 3, 4, 5, 6, 7},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := cut(tt.args.i)
+			tt.deck.shuffle(d)
+			if !reflect.DeepEqual(tt.deck, tt.want) {
+				t.Errorf("deal() = %v, want %v", tt.deck, tt.want)
+			}
+		})
+	}
+}
+
+func Test_dealNewStack(t *testing.T) {
+	tests := []struct {
+		name string
+		deck deck
+		want deck
+	}{
+		{
+			"",
+			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+			[]int{9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := dealNewStack()
 			tt.deck.shuffle(d)
 			if !reflect.DeepEqual(tt.deck, tt.want) {
 				t.Errorf("deal() = %v, want %v", tt.deck, tt.want)

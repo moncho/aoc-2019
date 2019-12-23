@@ -29,13 +29,21 @@ func main() {
 
 	deck.shuffle(instructions...)
 
-	fmt.Printf("After shuffling your factory order deck of 10007 cards, what is the position of card 2019? %d\n", deck[2019])
+	fmt.Printf("After shuffling your factory order deck of 10007 cards, what is the position of card 2019? %d\n", deck.position(2019))
 }
 
 func (d deck) shuffle(tt ...technique) {
 	for _, t := range tt {
 		t(d)
 	}
+}
+func (d deck) position(card int) int {
+	for i, c := range d {
+		if card == c {
+			return i
+		}
+	}
+	return -1
 }
 func shuffleInstructions(r io.Reader) []technique {
 	var tt []technique
@@ -47,36 +55,36 @@ func shuffleInstructions(r io.Reader) []technique {
 }
 func newTechnique(s string) technique {
 
+	s = strings.TrimSpace(s)
 	if strings.HasPrefix(s, "cut") {
 		i, err := strconv.Atoi(s[len("cut "):])
 		if err != nil {
 			panic(err)
 		}
 		return cut(i)
-
 	} else if strings.HasPrefix(s, "deal with increment") {
 		i, err := strconv.Atoi(s[len("deal with increment "):])
 		if err != nil {
 			panic(err)
 		}
 		return deal(i)
-
-	} else { //deal into new stack
+	} else if strings.HasPrefix(s, "deal into new stack") {
 		return dealNewStack()
+	} else {
+		panic(s)
 	}
 
 }
 
 func cut(i int) technique {
 	return func(a []int) {
-		if i < 0 {
-			i = len(a) + i
+		cut := i
+		if cut < 0 {
+			cut = len(a) + cut
 		}
 
-		cutted := append(a[i:], a[:i]...)
-		for i, j := range cutted {
-			a[i] = j
-		}
+		cutted := append(a[cut:], a[:cut]...)
+		copy(a, cutted)
 	}
 }
 func deal(i int) technique {
