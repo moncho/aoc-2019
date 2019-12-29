@@ -39,15 +39,15 @@ func Test_computer_run(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := computer{
-				program: tt.fields.program,
+				memory: tt.fields.program,
 			}
 			if err := c.run(); err != nil {
 				t.Errorf("computer.run() error = %v", err)
 				return
 			}
 
-			if !reflect.DeepEqual(c.program, tt.want) {
-				t.Errorf("computer.run() unexpected computer state = %v, want = %v", c.program, tt.want)
+			if !reflect.DeepEqual(c.memory, tt.want) {
+				t.Errorf("computer.run() unexpected computer state = %v, want = %v", c.memory, tt.want)
 
 			}
 		})
