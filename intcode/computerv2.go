@@ -1,8 +1,12 @@
+// Package intcode contains an implementation of an intcode computer.
 package intcode
 
 import (
+	"bufio"
 	"fmt"
 	"io"
+	"strconv"
+	"strings"
 )
 
 // V2Computer is the version 2 of the intcode computer.
@@ -12,6 +16,23 @@ type V2Computer struct {
 	in         chan int
 	out        chan int
 	err        error
+}
+
+// LoadProgram loads an Intcode program from the given reader.
+func LoadProgram(r io.Reader) []int {
+	var program []int
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		t := scanner.Text()
+		for _, s := range strings.Split(t, ",") {
+			i, err := strconv.Atoi(s)
+			if err != nil {
+				panic(err)
+			}
+			program = append(program, i)
+		}
+	}
+	return program
 }
 
 // NewV2 new v2 computer.
