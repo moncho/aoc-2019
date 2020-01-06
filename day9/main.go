@@ -14,7 +14,8 @@ func main() {
 
 	defer file.Close()
 
-	computer := intcode.NewV2(intcode.LoadProgram(file))
+	program := intcode.LoadProgram(file)
+	computer := intcode.NewV2(program)
 	computer.Run()
 	computer.In(1)
 
@@ -25,4 +26,11 @@ func main() {
 	}
 
 	fmt.Printf("What BOOST keycode does it produce? %d\n", last)
+
+	computer = intcode.NewV2(program)
+	computer.Run()
+	computer.In(2)
+
+	fmt.Printf("What are the coordinates of the distress signal? %d\n", <-computer.Out())
+
 }
