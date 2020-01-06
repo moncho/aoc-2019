@@ -91,7 +91,7 @@ explore:
 			next := pos.move(move)
 			if _, ok := shipMap[next]; !ok {
 				computer.In(int(move))
-				shipMap[next] = computer.Out()
+				shipMap[next] = <-computer.Out()
 				if shipMap[next] > 0 {
 					pos = next
 					backpath = append(backpath, move.backtrack())

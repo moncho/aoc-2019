@@ -82,7 +82,7 @@ func (a amplifiers) output(phase []int) int {
 		ampli.Run()
 		ampli.In(phase[i])
 		ampli.In(output)
-		output = ampli.Out()
+		output = <-ampli.Out()
 	}
 	return output
 }
@@ -105,7 +105,7 @@ func (a amplifiers) feedbackLoop(phase []int) int {
 		}
 
 		a[i].In(next)
-		next = a[i].Out()
+		next = <-a[i].Out()
 		if i == len(a)-1 {
 			i = 0
 		} else {
